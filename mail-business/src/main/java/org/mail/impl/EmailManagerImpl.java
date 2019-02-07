@@ -46,7 +46,7 @@ public class EmailManagerImpl {
 
     private String subject="mail Reminder ** LOAN OVERDUE **";
 
-    private String body="<h1>test</h1>";
+    /*private String body="<h1>test</h1>";*/
 
     private String templateLocation="C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail\\mail-business\\src\\main\\resources\\HTMLTemplate.html";
 
@@ -109,29 +109,38 @@ public class EmailManagerImpl {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse("dontkillewok@gmail.com"));
             message.setSubject(subject);
-            message.setText(body);
-            String test = "markolo";
+          /*  message.setText(body);
+            String test = "markolo";*/
 
             List<Mail> overdueList = getOverdueList(token);
             logger.info("overdue list size: " + overdueList.size());
-            for (Mail mail : overdueList
-            ) {
-                logger.info("loan id: " + mail.getEmail());
-                String text = createMailContent(mail);
+            if(overdueList.size() > 0) {
+                for (Mail mail : overdueList
+                ) {
+                    logger.info("loan id: " + mail.getEmail());
+                    String text = createMailContent(mail);
 
-                //HTML mail content
-                String htmlText = readEmailFromHtml(templateLocation, mail);
-                logger.info("html to be sent: " + htmlText);
+                    //HTML mail content
+                    System.out.println("getting template location: " + templateLocation);
+                    String htmlText = readEmailFromHtml(templateLocation, mail);
+                    logger.info("html to be sent: " + htmlText);
 
-                message.setContent(htmlText, "text/html");
-                logger.info("sending email to " + mail.getEmail());
-                try {
-                    logger.info("mail content: " + message.getContent().toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    message.setContent(htmlText, "text/html");
+                    logger.info("sending email to " + mail.getEmail());
+                    try {
+                        logger.info("mail content: " + message.getContent().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    /*Transport.send(message);*/
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                Transport.send(message);
-
+            }else{
+                logger.info("nothing to send");
             }
 
             System.out.println("Done");
@@ -145,13 +154,15 @@ public class EmailManagerImpl {
 
     //Method to replace the values for keys
     protected String readEmailFromHtml(String filePath, Mail mail) {
-        Map<String, String> input = getTemplateItems(mail);
+        Map<String, String> input = new HashMap<>();
+        input = getTemplateItems(mail);
 
 
         String msg = readContentFromFile(filePath);
         try {
             Set<Map.Entry<String, String>> entries = input.entrySet();
             for (Map.Entry<String, String> entry : entries) {
+                logger.info("entry: "+entry.getKey()+" / "+entry.getValue());
                 msg = msg.replace(entry.getKey().trim(), entry.getValue().trim());
             }
         } catch (Exception exception) {
@@ -161,6 +172,7 @@ public class EmailManagerImpl {
     }
 
     private Map<String, String> getTemplateItems(Mail mail) {
+
         //Set key values
         Map<String, String> input = new HashMap<String, String>();
         input.put("FIRSTNAME", mail.getFirstname());
@@ -169,6 +181,7 @@ public class EmailManagerImpl {
         String dueDate = dt1.format(mail.getDueDate());
         input.put("DUEDATE", dueDate);
         Date today = new Date();
+        logger.info("date: "+dueDate);
         int overDays = mail.getDiffdays();
         input.put("Isbn", mail.getIsbn());
         input.put("DIFFDAYS", Integer.toString(overDays));
@@ -252,6 +265,7 @@ public class EmailManagerImpl {
             mail.setAuthor(mout.getAuthor());
             mail.setDiffdays(mout.getDiffDays());
             mail.setDueDate(convertGregorianCalendarIntoDate(mout.getDueDate().toGregorianCalendar()));
+            mail.setEdition(mout.getEdition());
 
             mailList.add(mail);
         }

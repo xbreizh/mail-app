@@ -24,14 +24,14 @@ public class ConnectManagerImpl implements ConnectManager {
         GetTokenRequestType t = new GetTokenRequestType();
         t.setLogin(login);
         t.setPassword(password);
-        logger.info("login: " + login + " \n password: " + password);
+       /* logger.info("login: " + login + " \n password: " + password);*/
         try {
             GetTokenResponseType responseType = cs.getConnectServicePort().getToken(t);
             token = responseType.getReturn();
         } catch (BusinessExceptionConnect businessExceptionConnect) {
             logger.error("issue while trying to get the token");
         }
-        logger.info("token found: " + token);
+        logger.info("token found: ");
 
 
         if (!token.equals("wrong login or pwd")) {
