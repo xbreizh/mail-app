@@ -75,8 +75,7 @@ public class EmailManagerImpl {
     public static final String AES = "AES";
 
 
-    @Scheduled(cron = "*/10 * * * * *")
-    //@Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "* 00 11 * * *")
     public void sendMail() {
         token = connectManager.authenticate();
         if(token!=null){
@@ -132,7 +131,7 @@ public class EmailManagerImpl {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    /*Transport.send(message);*/
+                    Transport.send(message);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
