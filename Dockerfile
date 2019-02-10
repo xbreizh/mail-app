@@ -1,9 +1,9 @@
-FROM java:8
+FROM java:8-jdk-alpine
 
-WORKDIR /
+COPY ./target/mail-business-1.0-SNAPSHOT.jar /usr/app/
 
-COPY ./mail-business/target/mail-business-1.0-SNAPSHOT.jar mail-business-1.0-SNAPSHOT.jar
+WORKDIR /usr/app
 
-EXPOSE 8080
+RUN sh -c 'touch mail-business-1.0-SNAPSHOT.jar'
 
-CMD java - jar HelloWorld.jar
+ENTRYPOINT ["java","-jar","mail-business-1.0-SNAPSHOT.jar"]
