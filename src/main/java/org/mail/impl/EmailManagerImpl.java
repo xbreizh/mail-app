@@ -42,13 +42,13 @@ public class EmailManagerImpl {
 
     private String mailFrom = "xavier.lamourec@gmail.com";
 
-    private String fileLocation = "C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail3\\src\\main\\resources\\mail.properties";
+    private String fileLocation = "/usr/app/resources/mail.properties";
 
     private String subject = "mail Reminder ** LOAN OVERDUE **";
 
     /*private String body="<h1>test</h1>";*/
 
-    private String templateLocation = "C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail3\\src\\main\\resources\\HTMLTemplate.html";
+    private String templateLocation = "/usr/app/resources/HTMLTemplate.html";
 
     private String mailServer = "smtp.gmail.com";
 
@@ -73,6 +73,7 @@ public class EmailManagerImpl {
 
 
     public static final String AES = "AES";
+
 
     // */10 * * * * *
     // "* 00 11 * * *"
@@ -126,7 +127,7 @@ public class EmailManagerImpl {
 
                         //HTML mail content
                         System.out.println("getting template location: " + templateLocation);
-                        String htmlText = readEmailFromHtml(templateLocation, mail);
+                        String htmlText = readEmailFromHtml("/usr/app/resources/HTMLTemplate.html", mail);
                         System.out.println("html to be sent: " + htmlText);
 
                         message.setContent(htmlText, "text/html");
@@ -162,7 +163,7 @@ public class EmailManagerImpl {
         Map<String, String> input = new HashMap<String, String>();
         input = getTemplateItems(mail);
 
-
+        System.out.println("trying to get content from file");
         String msg = readContentFromFile(filePath);
         try {
             Set<Map.Entry<String, String>> entries = input.entrySet();
@@ -198,6 +199,7 @@ public class EmailManagerImpl {
 
     //Method to read HTML file as a String
     private String readContentFromFile(String fileName) {
+        System.out.println("trying to buffer file");
         StringBuffer contents = new StringBuffer();
 
         try {
@@ -340,7 +342,7 @@ public class EmailManagerImpl {
         String password = "";
         Properties prop = new Properties();
         InputStream input = null;
-        input = new FileInputStream(fileLocation);
+        input = new FileInputStream("/usr/app/resources/mail.properties");
         // load a properties file
         prop.load(input);
         tempkey = prop.getProperty("Key");
