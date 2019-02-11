@@ -1,5 +1,6 @@
 package org.mail.impl;
 
+
 import org.apache.log4j.Logger;
 import org.mail.contract.ConnectManager;
 import org.mail.model.Mail;
@@ -11,7 +12,6 @@ import org.troparo.entities.mail.GetOverdueMailListResponse;
 import org.troparo.entities.mail.MailTypeOut;
 import org.troparo.services.mailservice.BusinessExceptionMail;
 import org.troparo.services.mailservice.MailService;
-
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -42,13 +42,13 @@ public class EmailManagerImpl {
 
     private String mailFrom = "xavier.lamourec@gmail.com";
 
-    private String fileLocation = "C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail\\mail-business\\src\\main\\resources\\mail.properties";
+    private String fileLocation = "C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail3\\src\\main\\resources\\mail.properties";
 
     private String subject = "mail Reminder ** LOAN OVERDUE **";
 
     /*private String body="<h1>test</h1>";*/
 
-    private String templateLocation = "C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail\\mail-business\\src\\main\\resources\\HTMLTemplate.html";
+    private String templateLocation = "C:\\Users\\john\\Documents\\openClassrooms\\Project_7-library_troparo\\project\\new\\mail3\\src\\main\\resources\\HTMLTemplate.html";
 
     private String mailServer = "smtp.gmail.com";
 
@@ -76,26 +76,28 @@ public class EmailManagerImpl {
 
     // */10 * * * * *
     // "* 00 11 * * *"
-    @Scheduled(cron = "*/10 * * * * *")
-    //@Scheduled(fixedRate = 5000)
+    //@Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(fixedRate = 500000)
     public void sendMail() {
         token = connectManager.authenticate();
         if (token != null) {
 
             final String username = "xavier.lamourec@gmail.com";
             System.out.println("trying to send mail");
+            System.out.println("testing logger");
 
             Properties props = new Properties();
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.host", mailServer);
             props.put("mail.smtp.port", port);
-
+            System.out.println("properties passed ok");
             Session session = Session.getInstance(props,
                     new Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
                             try {
                                 return new PasswordAuthentication(username, getPassword());
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -104,44 +106,46 @@ public class EmailManagerImpl {
                     });
 
             try {
-
+                System.out.println("authentication ok");
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(mailFrom));
                 message.setRecipients(Message.RecipientType.TO,
                         InternetAddress.parse("dontkillewok@gmail.com"));
                 message.setSubject(subject);
+                System.out.println("getting message ok");
           /*  message.setText(body);
             String test = "markolo";*/
 
                 List<Mail> overdueList = getOverdueList(token);
-                logger.info("overdue list size: " + overdueList.size());
+                System.out.println("overdue list size: " + overdueList.size());
                 if (overdueList.size() > 0) {
                     for (Mail mail : overdueList
                     ) {
-                        logger.info("loan id: " + mail.getEmail());
+                        System.out.println("loan id: " + mail.getEmail());
                         String text = createMailContent(mail);
 
                         //HTML mail content
                         System.out.println("getting template location: " + templateLocation);
                         String htmlText = readEmailFromHtml(templateLocation, mail);
-                        logger.info("html to be sent: " + htmlText);
+                        System.out.println("html to be sent: " + htmlText);
 
                         message.setContent(htmlText, "text/html");
-                        logger.info("sending email to " + mail.getEmail());
+                        System.out.println("sending email to " + mail.getEmail());
                         try {
-                            logger.info("mail content: " + message.getContent().toString());
+                            System.out.println("mail content: " + message.getContent().toString());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         Transport.send(message);
-                        try {
+                        System.out.println("bam, sent: " + message.getSubject());
+                       /* try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                     }
                 } else {
-                    logger.info("nothing to send");
+                    System.out.println("nothing to send");
                 }
 
                 System.out.println("Done");
@@ -163,7 +167,7 @@ public class EmailManagerImpl {
         try {
             Set<Map.Entry<String, String>> entries = input.entrySet();
             for (Map.Entry<String, String> entry : entries) {
-                logger.info("entry: " + entry.getKey() + " / " + entry.getValue());
+                System.out.println("entry: " + entry.getKey() + " / " + entry.getValue());
                 msg = msg.replace(entry.getKey().trim(), entry.getValue().trim());
             }
         } catch (Exception exception) {
@@ -182,7 +186,7 @@ public class EmailManagerImpl {
         String dueDate = dt1.format(mail.getDueDate());
         input.put("DUEDATE", dueDate);
         Date today = new Date();
-        logger.info("date: " + dueDate);
+        System.out.println("date: " + dueDate);
         int overDays = mail.getDiffdays();
         input.put("Isbn", mail.getIsbn());
         input.put("DIFFDAYS", Integer.toString(overDays));
@@ -239,7 +243,7 @@ public class EmailManagerImpl {
 
     private List<Mail> getOverdueList(String token) {
         List<Mail> mailList = new ArrayList<Mail>();
-        logger.info("getting overdue list");
+        System.out.println("getting overdue list");
         MailService mailService = new MailService();
         GetOverdueMailListRequest requestType = new GetOverdueMailListRequest();
         requestType.setToken(token);
@@ -249,7 +253,7 @@ public class EmailManagerImpl {
         } catch (BusinessExceptionMail businessExceptionMail) {
             businessExceptionMail.printStackTrace();
         }
-        logger.info("overlist recuperated: " + mailList.size());
+        System.out.println("overlist recuperated: " + mailList.size());
         return mailList;
     }
 
@@ -356,7 +360,7 @@ public class EmailManagerImpl {
     public List<Mail> getOverdueEmailList() {
         HashMap<String, String> criterias = new HashMap<>();
         criterias.put("status", "OVERDUE");
-        logger.info("getting overdue list");
+        System.out.println("getting overdue list");
         List<org.mail.model.Loan> loans = loanManager.getLoansByCriterias(criterias);
         List<Mail> mailList = new ArrayList<>();
 

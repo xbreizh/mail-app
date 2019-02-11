@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mail-business</artifactId>
+    <artifactId>mail_app</artifactId>
     <groupId>org.mail</groupId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -29,9 +29,9 @@
 
         <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-            <version>1.6.2</version>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.0</version>
         </dependency>
 
 
@@ -102,7 +102,7 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>
-                                        https://raw.githubusercontent.com/xbreizh/troparo/e481ca9c19f78656678dfab01ca1a01f124c72e2/troparo-web/src/main/resources/org/troparo/web/services/MailService.wsdl
+                                        https://raw.githubusercontent.com/xbreizh/troparo/d83d23fd8dddee70f0cd52fa81b2d0a268f24c89/troparo-web/src/main/resources/org/troparo/web/services/MailService.wsdl
                                     </wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
