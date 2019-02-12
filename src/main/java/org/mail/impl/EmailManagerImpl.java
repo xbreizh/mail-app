@@ -54,6 +54,8 @@ public class EmailManagerImpl {
 
     private String port = "587";
 
+    private boolean test;
+
    /* @Value("${sender}")
     private String mailFrom;
     @Value("${fileLocation}")
@@ -77,7 +79,7 @@ public class EmailManagerImpl {
 
     // */10 * * * * *
     // "* 00 11 * * *"
-    //@Scheduled(cron = "*/10 * * * * *")
+    //@Scheduled(cron = "* 00 11 * * *")
     @Scheduled(fixedRate = 500000)
     public void sendMail() {
         token = connectManager.authenticate();
@@ -110,8 +112,7 @@ public class EmailManagerImpl {
                 System.out.println("authentication ok");
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(mailFrom));
-                message.setRecipients(Message.RecipientType.TO,
-                        InternetAddress.parse("dontkillewok@gmail.com"));
+
                 message.setSubject(subject);
                 System.out.println("getting message ok");
           /*  message.setText(body);
@@ -124,7 +125,15 @@ public class EmailManagerImpl {
                     ) {
                         System.out.println("loan id: " + mail.getEmail());
                         String text = createMailContent(mail);
+                        String recipient = mail.getEmail();
 
+                        // adding condition for testign purposes
+                        if (test) {
+                            recipient = "dontkillewok@gmail.com";
+                        }
+
+                        message.setRecipients(Message.RecipientType.TO,
+                                InternetAddress.parse(recipient));
                         //HTML mail content
                         System.out.println("getting template location: " + templateLocation);
                         String htmlText = readEmailFromHtml("/usr/app/resources/HTMLTemplate.html", mail);
